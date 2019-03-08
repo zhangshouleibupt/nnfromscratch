@@ -3,24 +3,6 @@ from torch.autograd import Variable
 import numpy as np
 import math
 import matplotlib.pyplot as plt
-# standard gradient descent
-t = Variable(torch.randn(1,2),requires_grad=True)
-epochs = 100
-lr = 0.01
-def gradientDescent():
-	for epoch in range(epochs):
-		y = torch.sum(t**2)/2
-		y.backward()
-		t.data -= lr * t.grad.data
-		#print(t)
-		if y.item() < 0.1:
-			lr = 0.001
-#cofigure one layer rnn
-#the standard rnn model formula
-#h_t = f(x_t,h_(t-1))
-#the variety of rnn used to simulate 
-#the sine wave
-
 class RNN():
 	def __init__(self,input_size,hidden_size,output_size):
 		self.hidden_size = hidden_size
@@ -45,13 +27,17 @@ class RNN():
 		self.w2.data -= self.w2.grad.data *lr
 		self.w1.grad.data.zero_()
 		self.w2.grad.data.zero_()
+		
+
 input_size = 1
 hidden_size = 6
 output_size = 1
 dtype = torch.FloatTensor
 lr = 0.01
+
 t = np.linspace(2,10,500+1)
 data = np.sin(t)
+
 x = Variable(torch.Tensor(data[:-1]).type(dtype), requires_grad=False)
 y = Variable(torch.Tensor(data[1:]).type(dtype), requires_grad=False)
 #plt.plot(data,color='blue',linestyle = "-")
@@ -74,11 +60,13 @@ for epoch in range(epochs):
 	loss_buf.append(train(rnn,x,y))
 hidden = rnn.initHidden()
 pred = []
+#predict 
 for t in x:
 	t = torch.tensor([t],dtype=torch.float32).unsqueeze(0)
 	out,hidden = rnn.forward(t,hidden)
 	pred.append(out.unsqueeze(0).item())
-plt.plot(pred,color='red')
+plt.plot(pred,color='red',linewidth=2.0,linestyle="--")
 plt.plot(data,color="blue")
+plt.savefig('./rnn_fit.png')
 plt.show()
 
