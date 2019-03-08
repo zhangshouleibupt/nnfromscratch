@@ -10,11 +10,11 @@ curve fitting说明：
 
 其中前馈神经网的拟合如下：
 
-![Figure_1](/media/ciphor/0E5E1A5C5E1A3D41/Figure_1.png)
+![Figure_1](./Figure_1.png)
 
 多项式拟合如下（项数为100）：
 
-![Figure_2](/media/ciphor/0E5E1A5C5E1A3D41/Figure_2.png)
+![Figure_2](./Figure_2.png)
 
 需要注意的是多项式的拟合是有封闭解的，不过我们仍然采用梯度下降的方法来拟合。
 

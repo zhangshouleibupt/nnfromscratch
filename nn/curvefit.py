@@ -62,6 +62,7 @@ data = np.sin(2*math.pi*data_time_steps)
 cf = CurveFitting(data_time_steps,data)
 cf.feeddata()
 cf.gradientDescent()
+pred_data1 = [cf.predict(x) for x in data_time_steps]
 model = CurveFit()
 optimizer = optim.SGD(model.parameters(),lr=0.01)
 epochs = 100
@@ -83,7 +84,9 @@ pred_data = [model.forward(x).resize(1).item() for x in data_time_steps]
 
 pred_data = [cf.predict(x) for x in data_time_steps]
 plt.plot(data,color='red',linewidth=2.0,linestyle='--')
-plt.plot(pred_data,color='blue')
+plt.plot(pred_data,color='blue',linewidth=2.0,linestyle='-')
+plt.plot(pred_data1,color='green')
+
 plt.show()
 
 
