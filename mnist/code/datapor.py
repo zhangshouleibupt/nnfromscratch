@@ -28,7 +28,7 @@ def readImages(file_name,numbers=60000):
 		piexs = file_content[i*28*28:(i+1)*28*28]
 		piexs = [piexs[index] for index in range(28*28)]
 		image = np.array(piexs,dtype=np.uint8)
-		#image = image.reshape(28,28)
+		#image = image.reshape(1,28,28)
 		image = image.reshape(1,-1)
 		images.append(image)
 	return images
@@ -58,9 +58,9 @@ def train(images,labels,model,criterion,optim):
 	for it in range(iters):
 		optim.zero_grad()
 		data = images[it*batch_size:batch_size*(it+1)]
-		batch_data = torch.randn((batch_size,1,28*28))
+		batch_data = torch.randn((batch_size,1,28,28))
 		for i in range(batch_size):
-			batch_data[i] = torch.tensor(data[i],dtype=torch.float32)
+			batch_data[i] = torch.tensor(data[i],dtype=torch.float32).view(1,28,28)
 		label = labels[it*batch_size:batch_size*(it+1)]
 		label = torch.tensor(label,dtype=torch.long)
 		output = model(batch_data).squeeze(1)
@@ -76,7 +76,9 @@ def train(images,labels,model,criterion,optim):
 	return loss_buf
 input_size = 28*28
 output_size = 10
-net = model.NeuralNet(input_size,output_size)
+#net = model.NeuralNet(input_size,output_size)
+net = model.ConvNet(output_size)
+
 
 loss_buf = []
 epochs = 10
@@ -86,8 +88,6 @@ optimizer = optim.SGD(net.parameters(),lr=lr)
 for epoch in range(epochs):
 	print("in epoch {}:".format(epoch))
 	loss_buf += train(train_set_image,train_set_label,net,criterion,optimizer)
-plt.plot(loss_buf)
-plt.show()	
 
 def isPredictRight(out,y):
 	if out.argmax(dim=2) == y:
@@ -97,8 +97,14 @@ def isPredictRight(out,y):
 acc = 0.0
 all_items = len(test_set_image)
 for x,y in zip(test_set_image,test_set_label):
-	x = torch.tensor(x,dtype=torch.float32).view(1,1,-1)
+	x = torch.tensor(x,dtype=torch.float32).view(1,1,28,28)
 	out = net(x)
 	acc += isPredictRight(out,y)
 
 print('the acc is {}'.format(acc/all_items))
+
+plt.plot(loss_buf)
+
+plt.savefig('../loss1.png')
+plt.show()	
+
