@@ -2,7 +2,7 @@ import random
 import unicodedata
 import string
 import re
-
+import torch
 
 def readLines(file_name):
     with open(file_name,'rb') as f:
@@ -140,3 +140,23 @@ for pair in conversation_pairs:
         voc.addSentence(p)
 voc.trim(MIN_COUNT)
 trimed_pairs = trimRareWord(conversation_pairs,voc)
+def writePairsToFile(file_name,pairs):
+    with open(file_name,'w',encoding='utf-8') as f:
+        for p in pairs:
+            conversation = '+$+'.join(p)
+            f.write(conversation+'\n')
+file_write_path = '../data/conversation_pais.txt'
+#writePairsToFile(file_write_path,trimed_pairs)
+file_path = '../data/conversation_pais.txt'
+content = []
+with open(file_path,encoding='utf-8') as f:
+    content = [line.split('+$+') for line in f]
+sample = random.choice(content)
+
+def sentenceToTensor(sentence):
+    dtype = torch.long
+    sen_list = [voc.word2Index[word] for word in sentence.strip('\n').split(' ')]
+    sen_ten = torch.tensor(sen_list,dtype=dtype)
+    return sen_ten
+for p in sample:
+    print(sentenceToTensor(p))
